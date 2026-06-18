@@ -1,4 +1,4 @@
-from colorama import Fore, init
+from colorama import Fore, init, Style
 
 from utils import file_io
 import ciphers.caesar as caesar
@@ -138,14 +138,15 @@ def print_result(result):
         print("2. Файл")
         dst = input("Выберите: ").strip()
         if dst == '1':
-            print("Результат: ")
-            print(result)
+            print("Результат: ", end='')
+            print(Fore.LIGHTBLUE_EX + result + '\n')
             break
         elif dst == '2':
             filename = input("Имя файла для записи: ")
             try:
-                file_io.write_text(filename, result)
-                print("Результат записан в файл.")
+                file_io.write_text(filename + '.txt', result)
+                print(Fore.LIGHTBLUE_EX + "\nРезультат записан в файл.")
+                print(Fore.BLUE + f"Файл: {filename}.txt\n")
                 break
             except Exception as e:
                 print(Fore.LIGHTRED_EX + f"Ошибка записи файла: {e}")
@@ -157,14 +158,14 @@ def get_result(mode, language, cipher, key, text):
     try:
         if mode == 'encode':
             if key is None:
-                result = cipher.encode(text, language=language)
+                result = cipher.encode(text, language) # Убрал тут language=language
             else:
-                result = cipher.encode(text, key, language=language)
+                result = cipher.encode(text, key, language)
         else:
             if key is None:
-                result = cipher.decode(text, language=language)
+                result = cipher.decode(text, language)
             else:
-                result = cipher.decode(text, key, language=language)
+                result = cipher.decode(text, key, language)
         return result
     except ValueError as e:
         print(Fore.LIGHTRED_EX + f"Ошибка: {e}")
@@ -193,11 +194,12 @@ def main():
 
         return True
     except KeyboardInterrupt:
-        print(Fore.LIGHTRED_EX + "Прервано пользователем.")
+        print(Fore.LIGHTRED_EX + "\nПрервано пользователем.")
         return False
 
-
+print_result("asasdasd")
 
 if __name__ == '__main__':
     while main():
         pass
+
