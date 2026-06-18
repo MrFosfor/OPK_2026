@@ -8,7 +8,7 @@ def _get_alphabet(language):
 def _reverse_char(ch, alphabet):
     if ch in alphabet:
         idx = alphabet.index(ch)
-        return alphabet[len(alphabet) - 1 - idx]  # == alphabet[-idx]
+        return alphabet[len(alphabet) - 1 - idx]
     elif ch in alphabet.upper():
         idx = alphabet.upper().index(ch)
         return alphabet.upper()[len(alphabet) - 1 - idx]
@@ -22,4 +22,4 @@ def encode(text, key=None, language='en'):
 
 
 def decode(text, key=None, language='en'):
-    encode(text, key, language)
+    return encode(text, key, language)
