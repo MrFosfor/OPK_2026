@@ -1,10 +1,10 @@
 from colorama import Fore, init
 
-from utils import file_io
-import ciphers.caesar as caesar
-import ciphers.atbash as atbash
-import ciphers.playfair as playfair
-import ciphers.hash_substitution as hash_cipher
+from FinalProject.utils import file_io
+import FinalProject.ciphers.caesar as caesar
+import FinalProject.ciphers.atbash as atbash
+import FinalProject.ciphers.playfair as playfair
+import FinalProject.ciphers.hash_substitution as hash_cipher
 
 CIPHERS = {
     'caesar': caesar,
