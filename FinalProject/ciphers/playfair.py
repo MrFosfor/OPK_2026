@@ -1,8 +1,3 @@
-from colorama import Fore, init
-
-init(autoreset=True)
-
-
 def _prepare_key_en(key):
     key = key.upper().replace("J", "I")
     seen = set()
@@ -32,12 +27,20 @@ def _prepare_key_ru(key):
         ch = chr(code)
         if ch not in seen:
             result.append(ch)
-    return ''.join(result) + ',' + '.' + '-'
+    for symbol in (',', '.', '-', '/'):
+        if symbol not in seen:
+            result.append(symbol)
+    return ''.join(result)
 
 
-def _prepare_text_en(text):
-    text = ''.join(ch for ch in text.upper() if 'A' <= ch <= 'Z')
-    text = text.replace('J', 'I')
+def _prepare_text(text, language):
+    if language == 'en':
+        text = ''.join(ch for ch in text.upper() if 'A' <= ch <= 'Z')
+        text = text.replace('J', 'I')
+        symbol = 'X'
+    else:
+        text = ''.join(ch for ch in text.upper().replace('Ё', 'Е') if ('А' <= ch <= 'Я') or ch in (',', '.', '-', '/'))
+        symbol = 'Ъ'
     pairs = []
     i = 0
     while i < len(text):
@@ -45,42 +48,26 @@ def _prepare_text_en(text):
         if i + 1 < len(text):
             b = text[i + 1]
             if a == b:
-                pairs.append(a + 'X')
+                pairs.append(a + symbol)
                 i += 1
             else:
                 pairs.append(a + b)
                 i += 2
         else:
-            pairs.append(a + 'X')
-            i += 1
-    return pairs
-
-
-def _prepare_text_ru(text):
-    text = ''.join(ch for ch in text.upper() if ('А' <= ch <= 'Я') or ch in (',', '.', '-'))
-    text = text.replace('Ё', 'Е')
-    pairs = []
-    i = 0
-    while i < len(text):
-        a = text[i]
-        if i + 1 < len(text):
-            b = text[i + 1]
-            if a == b:
-                pairs.append(a + 'Ъ')
-                i += 1
-            else:
-                pairs.append(a + b)
-                i += 2
-        else:
-            pairs.append(a + 'Ъ')
+            pairs.append(a + symbol)
             i += 1
     return pairs
 
 
 def _process_pair(a, b, table, mode, language):
     num = 5 if language == 'en' else 6
-    r1, c1 = _find_position(table, a, language)
-    r2, c2 = _find_position(table, b, language)
+    pos1 = _find_position(table, a, language)
+    pos2 = _find_position(table, b, language)
+    if pos1 is None or pos2 is None:
+        raise ValueError("Символ отсутствует в таблице. Попробуйте снова")
+    else:
+        r1, c1 = pos1
+        r2, c2 = pos2
     if r1 == r2:
         if mode == "encode":
             c1 = (c1 + 1) % num
@@ -118,22 +105,34 @@ def _find_position(table, ch, language):
     return None
 
 
+def _del_sep(text, language):
+    symbol = 'X' if language == 'en' else 'Ъ'
+    if len(text) <= 1:
+        return text
+    result = [text[0]]
+    for i in range(1, len(text) - 1):
+        ch = text[i]
+        if ch == symbol and text[i - 1] == text[i + 1]:
+            continue
+        result.append(ch)
+    if text[-1] != symbol:
+        result.append(text[-1])
+    return ''.join(result)
+
+
 def encode(text, key, language='en'):
     table = _build_table(key, language)
-    if language == 'en':
-        pairs = _prepare_text_en(text)
-    else:
-        pairs = _prepare_text_ru(text)
+    pairs = _prepare_text(text, language)
     return ''.join(_process_pair(a, b, table, 'encode', language) for a, b in pairs)
 
 
 def decode(text, key, language='en'):
     table = _build_table(key, language)
     if language == 'en':
-        text = ''.join(ch for ch in text.upper() if 'A' <= ch <= 'z')
+        text = ''.join(ch for ch in text.upper().replace('J', 'I') if 'A' <= ch <= 'Z')
     else:
-        text = ''.join(ch for ch in text.upper() if 'А' <= ch <= 'Я')
+        text = ''.join(ch for ch in text.upper().replace('Ё', 'Е') if 'А' <= ch <= 'Я' or ch in (',', '.', '-', '/'))
     if len(text) % 2 != 0:
-        raise ValueError(Fore.LIGHTRED_EX + "Зашифрованный текст должен иметь четную длину.")
+        raise ValueError("Зашифрованный текст должен иметь четную длину.")
     pairs = [text[i:i + 2] for i in range(0, len(text), 2)]
-    return ''.join(_process_pair(a, b, table, 'decode', language) for a, b in pairs)
+    return _del_sep(''.join(_process_pair(a, b, table, 'decode', language) for a, b in pairs), language)

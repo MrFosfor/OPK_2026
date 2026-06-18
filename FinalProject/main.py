@@ -1,4 +1,4 @@
-from colorama import Fore, init, Style
+from colorama import Fore, init
 
 from utils import file_io
 import ciphers.caesar as caesar
@@ -78,7 +78,7 @@ def get_key(cipher_name):
             else:
                 key_str = input("Введите ключ (строка): ").strip()
                 if cipher_name == 'playfair':
-                    if len(key_str) > 1:
+                    if len(key_str) > 0:
                         return key_str
                     else:
                         print(Fore.LIGHTRED_EX + "Ключ должен быть не нулевой длины.")
@@ -100,7 +100,7 @@ def get_key(cipher_name):
                         print(Fore.LIGHTRED_EX + "В файле должно быть целое число. Попробуйте снова.")
                         continue
                 elif cipher_name == 'playfair':
-                    if len(key_str) > 1:
+                    if len(key_str) > 0:
                         return key_str
                     else:
                         print(Fore.LIGHTRED_EX + "Ключ должен быть не нулевой длины.")
@@ -120,11 +120,19 @@ def get_text_source():
         print("2. Файл")
         src = input("Выберите: ").strip()
         if src == '1':
-            return input("Введите текст: ")
+            text = input("Введите текст: ")
+            if len(text) != 0:
+                return text
+            else:
+                print(Fore.LIGHTRED_EX + "Текст должен быть ненулевой длины.")
         elif src == '2':
             filename = input("Имя файла для чтения: ")
             try:
-                return file_io.read_text(filename)
+                text = file_io.read_text(filename)
+                if len(text) != 0:
+                    return text
+                else:
+                    print(Fore.LIGHTRED_EX + "Текст должен быть ненулевой длины.")
             except Exception as e:
                 print(Fore.LIGHTRED_EX + f"Ошибка чтения файла: {e}")
         else:
@@ -144,9 +152,9 @@ def print_result(result):
         elif dst == '2':
             filename = input("Имя файла для записи: ")
             try:
-                file_io.write_text(filename + '.txt', result)
+                file_io.write_text(filename, result)
                 print(Fore.LIGHTBLUE_EX + "\nРезультат записан в файл.")
-                print(Fore.BLUE + f"Файл: {filename}.txt\n")
+                print(Fore.BLUE + f"Файл: {filename}\n")
                 break
             except Exception as e:
                 print(Fore.LIGHTRED_EX + f"Ошибка записи файла: {e}")
@@ -158,12 +166,12 @@ def get_result(mode, language, cipher, key, text):
     try:
         if mode == 'encode':
             if key is None:
-                result = cipher.encode(text, language) # Убрал тут language=language
+                result = cipher.encode(text, language=language)
             else:
                 result = cipher.encode(text, key, language)
         else:
             if key is None:
-                result = cipher.decode(text, language)
+                result = cipher.decode(text, language=language)
             else:
                 result = cipher.decode(text, key, language)
         return result
@@ -197,9 +205,7 @@ def main():
         print(Fore.LIGHTRED_EX + "\nПрервано пользователем.")
         return False
 
-print_result("asasdasd")
 
 if __name__ == '__main__':
     while main():
         pass
-
