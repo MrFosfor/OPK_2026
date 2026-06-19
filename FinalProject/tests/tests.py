@@ -1,16 +1,11 @@
 from colorama import Fore, init
 
-import FinalProject.main as main
 import FinalProject.ciphers.caesar as caesar
 import FinalProject.ciphers.atbash as atbash
 import FinalProject.ciphers.playfair as playfair
 import FinalProject.ciphers.hash_substitution as hash_cipher
 
 init(autoreset=True)
-
-
-def _main_test():
-    pass
 
 
 def _test_cipher(encode_func, decode_func, text, key, language='en'):
@@ -109,12 +104,11 @@ def _playfair_test():
     enc3 = playfair.encode(text, "OTHER", 'en')
     assert enc1 != enc3, "Разные ключи должны давать разные шифры"
 
-    def tests():
-        _main_test()
-        _caesar_test()
-        _atbash_test()
-        _hash_substitution_test()
-        _playfair_test()
+def tests():
+    _caesar_test()
+    _atbash_test()
+    _hash_substitution_test()
+    _playfair_test()
 
-    if __name__ == '__main__':
-        tests()
+if __name__ == '__main__':
+    tests()
