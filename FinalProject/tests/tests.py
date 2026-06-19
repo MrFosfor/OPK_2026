@@ -77,7 +77,7 @@ def _hash_substitution_test():
     assert enc1 == enc2, "Хеш-подстановка должна быть детерминированной при одинаковом ключе"
 
     enc3 = hash_cipher.encode(text, "other", 'en')
-    assert enc1 != enc3, "Разные ключи должны давать разные шифры (хотя бы в большинстве случаев)"
+    assert enc1 != enc3, "Разные ключи должны давать разные шифры"
 
 
 def _playfair_test():
@@ -107,7 +107,7 @@ def _playfair_test():
     assert enc1 == enc2, "Плейфер должен быть детерминирован при одинаковом ключе"
 
     enc3 = playfair.encode(text, "OTHER", 'en')
-    assert enc1 != enc3, "Разные ключи должны давать разные шифры (в большинстве случаев)"
+    assert enc1 != enc3, "Разные ключи должны давать разные шифры"
 
     def tests():
         _main_test()
