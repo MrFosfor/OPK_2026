@@ -54,7 +54,7 @@ def _atbash_test():
 
     text = "Hello"
     assert atbash.encode(text, language='en') == atbash.decode(text, language='en'), (
-            Fore.LIGHTRED_EX + "Для Атбаша шифрование и дешифрование должны давать одинаковый результат")
+        "Для Атбаша шифрование и дешифрование должны давать одинаковый результат")
 
 
 def _hash_substitution_test():
@@ -74,12 +74,10 @@ def _hash_substitution_test():
     key = "test"
     enc1 = hash_cipher.encode(text, key, 'en')
     enc2 = hash_cipher.encode(text, key, 'en')
-    assert enc1 == enc2, (Fore.LIGHTRED_EX +
-                          "Хеш-подстановка должна быть детерминированной при одинаковом ключе")
+    assert enc1 == enc2, "Хеш-подстановка должна быть детерминированной при одинаковом ключе"
 
     enc3 = hash_cipher.encode(text, "other", 'en')
-    assert enc1 != enc3, (Fore.LIGHTRED_EX +
-                          "Разные ключи должны давать разные шифры (хотя бы в большинстве случаев)")
+    assert enc1 != enc3, "Разные ключи должны давать разные шифры (хотя бы в большинстве случаев)"
 
 
 def _playfair_test():
@@ -106,21 +104,17 @@ def _playfair_test():
     key = "KEY"
     enc1 = playfair.encode(text, key, 'en')
     enc2 = playfair.encode(text, key, 'en')
-    assert enc1 == enc2, (Fore.LIGHTRED_EX +
-                          "Плейфер должен быть детерминирован при одинаковом ключе")
+    assert enc1 == enc2, "Плейфер должен быть детерминирован при одинаковом ключе"
 
     enc3 = playfair.encode(text, "OTHER", 'en')
-    assert enc1 != enc3, (Fore.LIGHTRED_EX +
-                          "Разные ключи должны давать разные шифры (в большинстве случаев)")
+    assert enc1 != enc3, "Разные ключи должны давать разные шифры (в большинстве случаев)"
 
+    def tests():
+        _main_test()
+        _caesar_test()
+        _atbash_test()
+        _hash_substitution_test()
+        _playfair_test()
 
-def tests():
-    _main_test()
-    _caesar_test()
-    _atbash_test()
-    _hash_substitution_test()
-    _playfair_test()
-
-
-if __name__ == '__main__':
-    tests()
+    if __name__ == '__main__':
+        tests()
